@@ -21,6 +21,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -116,14 +118,11 @@ public class MyWatchFace extends CanvasWatchFaceService {
         boolean mAmbient;
         Time mTime;
         Calendar mCalendar;
+        GoogleApiClient mGoogleApiClient;
 
-        private GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(MyWatchFace.this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(Wearable.API)
-                .build();
         int mHigh;
         int mLow;
+        int mWeatherID;
         Date mDate;
         java.text.DateFormat mDateFormat;
         SimpleDateFormat mDayOfWeekFormat;
@@ -159,6 +158,12 @@ public class MyWatchFace extends CanvasWatchFaceService {
         @Override
         public void onCreate(SurfaceHolder holder) {
             super.onCreate(holder);
+
+            mGoogleApiClient = new GoogleApiClient.Builder(MyWatchFace.this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(Wearable.API)
+                    .build();
 
             setWatchFaceStyle(new WatchFaceStyle.Builder(MyWatchFace.this)
                     .setCardPeekMode(WatchFaceStyle.PEEK_MODE_VARIABLE)
@@ -345,6 +350,19 @@ public class MyWatchFace extends CanvasWatchFaceService {
             canvas.drawText(
                     Integer.toString(mLow)+"º",
                     mXOffset * 2, mYOffset + (mLineHeight * 2), mDatePaint);
+
+            canvas.drawText(
+                    Integer.toString(mHigh)+"º",
+                    mXOffset * 2, mYOffset + (mLineHeight * 3), mDatePaint);
+
+            Bitmap icon = BitmapFactory.decodeResource(getResources(),
+                    Utility.getIconResourceForWeatherCondition(mWeatherID));
+
+            if (icon != null) {
+                canvas.drawBitmap(
+                        icon,
+                        mXOffset, mYOffset + (mLineHeight * 2), mDatePaint);
+            }
         }
 
         /**
@@ -410,6 +428,7 @@ public class MyWatchFace extends CanvasWatchFaceService {
                 DataMap dataMap = dataMapItem.getDataMap();
                 mHigh = dataMap.getInt("high");
                 mLow = dataMap.getInt("low");
+                mWeatherID = dataMap.getInt("weatherId");
 
                 Log.d("Update","RECEIVED WEATHER DATA");
 

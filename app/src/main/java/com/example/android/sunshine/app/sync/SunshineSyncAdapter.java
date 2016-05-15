@@ -103,6 +103,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                     @Override
                     public void onConnected(Bundle bundle) {
+                        Log.d("SYNC","CONNECTING G API");
                     }
                     @Override
                     public void onConnectionSuspended(int i) {
@@ -361,7 +362,7 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 //send data to wearable here
 
                 if (i == 0) {
-                    sendCurrentWeatherToWearable((int)high, (int)low);
+                    sendCurrentWeatherToWearable((int)high, (int)low, weatherId);
                 }
             }
 
@@ -391,14 +392,14 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    private void sendCurrentWeatherToWearable(int low, int high) {
+    private void sendCurrentWeatherToWearable(int low, int high, int weatherId) {
 
         Log.d("Update","SENDING WEATHER DATA");
 
         PutDataMapRequest putDataMapRequest = PutDataMapRequest.create("/current-weather").setUrgent();
         putDataMapRequest.getDataMap().putInt("high", high);
         putDataMapRequest.getDataMap().putInt("low", low);
-        putDataMapRequest.getDataMap().putLong("Time",System.currentTimeMillis());
+        putDataMapRequest.getDataMap().putInt("weatherId", weatherId);
 
         PutDataRequest request = putDataMapRequest.asPutDataRequest();
         Wearable.DataApi.putDataItem(mGoogleApiClient, request).setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
