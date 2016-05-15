@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="digital_text_size">30dp</dimen>
+    <dimen name="digital_text_size_round">35dp</dimen>
+
+    <dimen name="digital_subtext_size">12dp</dimen>
+    <dimen name="digital_subtext_size_round">15dp</dimen>
+
+    <dimen name="digital_x_offset">60dp</dimen>
+    <dimen name="digital_x_offset_round">60dp</dimen>
+    <dimen name="digital_y_offset">90dp</dimen>
+    <dimen name="line_height">20dp</dimen>
+</resources>
